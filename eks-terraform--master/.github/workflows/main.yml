@@ -1,27 +1,35 @@
-name: test
-on: 
-    workflow_dispatch:
-env: 
-    AWS_ACCESS_KEY_ID: ${{secrets. AWS_ACCESS_KEY}}
-    AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
-# Jobs
+name: Terraform Deploy
+
+on:
+  push:
+    branches:
+      - master
+
 jobs:
-    setup_and_provision_infrastructure:
-        runs-on: ubuntu-latest
-        steps:
-        - name: Configure aws-cli
-          uses: aws-actions/configure-aws-credentials@v1
-          with:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Configure AWS CLI
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
             AWS_ACCESS_KEY_ID: ${{secrets. AWS_ACCESS_KEY}}
             AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
             aws-region: us-east-1
-        - name: Checkout
-          uses: actions/checkout@v2
-        - name: Setup Terraform
-          uses:  hashicorp/setup-terraform@v1 
-        - name: Terraform init
-          run: terraform init
 
-              
 
-            
+      - name: Terraform Init
+        run: terraform init
+      - name: Terraform Plan
+        run: terraform plan
+      - name: Terraform Apply
+        run: terraform apply
+
+
+
+
+
+
+
+
+
